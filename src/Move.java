@@ -1,12 +1,15 @@
-public class Move {
-    private Car car;
-    private int destinationX;
-    private int destinationY;
 
-    public Move(Car car, int destinationX, int destinationY) {
+public class Move {
+    private State currentState;
+    private Car car;
+    private int destX;
+    private int destY;
+
+    public Move(Car car, int destX, int destY, State state) {
         this.car = car;
-        this.destinationX = destinationX;
-        this.destinationY = destinationY;
+        this.destX = destX;
+        this.destY = destY;
+        this.currentState = state;
     }
 
     public Car getCar() {
@@ -17,19 +20,45 @@ public class Move {
         this.car = car;
     }
 
-    public int getDestinationX() {
-        return destinationX;
+    public int getDestX() {
+        return destX;
     }
 
-    public void setDestinationX(int destinationX) {
-        this.destinationX = destinationX;
+    public void setDestX(int destX) {
+        this.destX = destX;
     }
 
-    public int getDestinationY() {
-        return destinationY;
+    public int getDestY() {
+        return destY;
     }
 
-    public void setDestinationY(int destinationY) {
-        this.destinationY = destinationY;
+    public void setDestY(int destY) {
+        this.destY = destY;
+    }
+
+    public boolean isLegal() {
+        if (car.isVertical()) {
+            if (destX != car.getX()) return false;
+            if (Math.abs(destY - car.getY()) > 1) return false;
+        } else {
+            if (destY != car.getY()) return false;
+            if (Math.abs(destX - car.getX()) > 1) return false;
+        }
+
+        Car newCar = new Car(car.getQuadFormat());
+        newCar.setX(destX);
+        newCar.setY(destY);
+        for (int[] cord: newCar.getCoordinatesOccupied()) {
+            if (cord[0] < 0 || cord[0] >= State.ROW_COUNT) return false;
+            if (cord[1] < 0 || cord[1] >= State.COL_COUNT) return false;
+            if (!currentState.isOpen(cord[0], cord[1])) {
+                if (currentState.getCarAt(cord[0], cord[1]).isPresent()) {
+                    if (!currentState.getCarAt(cord[0],cord[1]).get().equals(car)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

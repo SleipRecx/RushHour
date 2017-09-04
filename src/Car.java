@@ -58,4 +58,18 @@ public class Car {
     public void setSize(int size) {
         this.size = size;
     }
+
+    public int[] getQuadFormat() {
+        return new int[]{this.vertical ? 1 : 0, x, y, size};
+    }
+
+    @Override
+    public String toString() {
+        return "Car{" +
+                "vertical=" + vertical +
+                ", x=" + x +
+                ", y=" + y +
+                ", size=" + size +
+                '}';
+    }
 }
