@@ -111,7 +111,11 @@ public class State implements Comparable{
 
     @Override
     public boolean equals(Object o) {
-        return this.toString() .equals(o.toString());
+        if(o instanceof State){
+            State toCompare = (State) o;
+            return this.toString().equals(toCompare.toString());
+        }
+        return false;
     }
 
     @Override

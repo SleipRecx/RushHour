@@ -64,6 +64,29 @@ public class Car {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Car car = (Car) o;
+
+        if (vertical != car.vertical) return false;
+        if (x != car.x) return false;
+        if (y != car.y) return false;
+        return size == car.size;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (vertical ? 1 : 0);
+        result = 31 * result + x;
+        result = 31 * result + y;
+        result = 31 * result + size;
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Car{" +
                 "vertical=" + vertical +
