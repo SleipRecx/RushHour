@@ -17,6 +17,8 @@ public class Main {
         cars.add(new Car(new int[]{1, 4, 2, 2}));
         SearchProblem rushHour = new RushHour(cars);
 
-        SearchAlgorithms.bfs(rushHour).forEach(SearchProblem::print);
+        //SearchAlgorithms.bfs(rushHour).forEach(SearchProblem::print);
+        //SearchAlgorithms.dfs(rushHour).forEach(SearchProblem::print);
+        SearchAlgorithms.AStar(rushHour).forEach(SearchProblem::print);
     }
 }

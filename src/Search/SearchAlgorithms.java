@@ -25,6 +25,30 @@ public class SearchAlgorithms {
         throw new IllegalStateException("No solution found");
     }
 
+    public static List<SearchProblem> dfs(SearchProblem root) {
+        Stack<SearchProblem> stack = new Stack<>();
+        List<SearchProblem> discovered = new ArrayList<>();
+        stack.push(root);
+
+        while (!stack.isEmpty()) {
+            SearchProblem v = stack.pop();
+
+            if (!discovered.contains(v)) {
+                discovered.add(v);
+                for (SearchProblem sp: v.generateSuccessors()) {
+                    stack.push(sp);
+                }
+            }
+
+            if(v.isSolution()) {
+                System.out.println("sol");
+                return discovered;
+            }
+
+        }
+        return null;
+    }
+
 
     public static List<SearchProblem> reconstructPath(Map<SearchProblem, SearchProblem> cameFrom, SearchProblem goalState) {
         List<SearchProblem> path = new ArrayList<>();
@@ -37,36 +61,31 @@ public class SearchAlgorithms {
         return path;
     }
 
-    /*
-    public RushHour AStar(RushHour start) {
+
+    public static List<SearchProblem> AStar(SearchProblem start) {
 
         Set closedSet = new LinkedHashSet();
+        Queue<SearchProblem> openSet = new LinkedList<>();
+        Map<SearchProblem, SearchProblem> cameFrom = new HashMap<>();
+        Map<SearchProblem, Double> gScore = new HashMap<>();
+        Map<SearchProblem, Double> fScore = new HashMap<>();
 
-        Queue<RushHour> openSet = new LinkedList<>();
         openSet.add(start);
-
-        Map<RushHour, RushHour> cameFrom = new HashMap<>();
-        Map<RushHour, Double> gScore = new HashMap<>();
-        Map<RushHour, Double> fScore = new HashMap<>();
-
-
         gScore.put(start, 0.0);
-        fScore.put(start, h(start));
-
+        fScore.put(start, start.h());
 
         int moves = 0;
         while(!openSet.isEmpty()) {
-            moves++;
 
             // get the node from openSet with lowest fScore. TODO: refactor
-            RushHour current = openSet.peek();
+            SearchProblem current = openSet.peek();
             double value = fScore.get(current);
-            for(RushHour s: openSet) {
+            for(SearchProblem s: openSet) {
                 if (fScore.get(s) < value) {
                     current = s;
                 }
             }
-            //current.print();
+
 
             if(!gScore.containsKey(current)) {
                 gScore.put(current, (double) moves);
@@ -74,15 +93,14 @@ public class SearchAlgorithms {
 
             if(current.isSolution()) {
                 System.out.println("Found solution! (in "+ moves +" moves)");
-                reconstructPath(cameFrom, current).forEach(RushHour::print);
-                return current;
+                System.out.println(moves);
+                return reconstructPath(cameFrom, current);
             }
 
             openSet.remove(current);
             closedSet.add(current);
 
-            for (RushHour successor: current.generateSuccessors()) {
-                successor.print();
+            for (SearchProblem successor: current.generateSuccessors()) {
                 if (closedSet.contains(successor)) {
                     continue;
                 }
@@ -93,20 +111,21 @@ public class SearchAlgorithms {
 
                 // gScore[current] + distance from current to neighbor (always 1?)
                 double tentativeGScore = gScore.get(current) + 1;
-                System.out.println(tentativeGScore);
                 if (tentativeGScore >= gScore.get(current)) {
                 }
 
                 cameFrom.put(successor, current);
                 gScore.put(successor, tentativeGScore);
-                fScore.put(successor, gScore.get(successor) + h(successor));
+                fScore.put(successor, gScore.get(successor) + successor.h());
 
             }
+
+            moves++;
 
         }
         return null;
 
     }
-    */
+
 
 }

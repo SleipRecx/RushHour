@@ -60,7 +60,7 @@ public class RushHour implements SearchProblem {
 
     @Override
     public Double g() {
-        return 0.0;
+        return 1.0;
     }
 
     public void addCar(Car c) {
