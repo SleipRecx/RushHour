@@ -18,14 +18,17 @@ public class Puzzle {
         return board;
     }
 
-    public double h() {
-        return 1;
+    public double h(State s) {
+        System.out.println("BLOCKING:" + s.blocking());
+        return s.distanceToGoal() + s.blocking();
     }
 
     /*public State getLowestFscore(Map<State, Double> fScore, ) {
         State lowest = fScore.entrySet().stream().min(Map.Entry.comparingByValue()).get().getKey();
         for()
     }*/
+
+
 
     public State AStar(State start) {
 
@@ -40,7 +43,7 @@ public class Puzzle {
 
 
         gScore.put(start, 0.0);
-        fScore.put(start, h());
+        fScore.put(start, h(start));
 
 
         int moves = 0;
@@ -55,7 +58,7 @@ public class Puzzle {
                     current = s;
                 }
             }
-            current.print();
+            //current.print();
 
             if(!gScore.containsKey(current)) {
                 gScore.put(current, (double) moves);
@@ -72,6 +75,7 @@ public class Puzzle {
             closedSet.add(current);
 
             for (State successor: current.generateSuccessors()) {
+                successor.print();
                 if (closedSet.contains(successor)) {
                     continue;
                 }
@@ -84,12 +88,11 @@ public class Puzzle {
                 double tentativeGScore = gScore.get(current) + 1;
                 System.out.println(tentativeGScore);
                 if (tentativeGScore >= gScore.get(current)) {
-                    continue;
                 }
 
                 cameFrom.put(successor, current);
                 gScore.put(successor, tentativeGScore);
-                fScore.put(successor, gScore.get(successor) + h());
+                fScore.put(successor, gScore.get(successor) + h(successor));
 
 
             }

@@ -23,6 +23,8 @@ public class Main {
             System.out.println("equals good");
         }
 
+        System.out.println("Blocking: " + p.getBoard().blocking());
+
         Map<String, Double> fScore = new HashMap<>();
         fScore.put("test1", 2.0);
         fScore.put("test2", 2.0);

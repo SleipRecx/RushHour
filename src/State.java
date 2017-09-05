@@ -20,6 +20,14 @@ public class State implements Comparable{
                 .collect(Collectors.toSet()).isEmpty();
     }
 
+    public int blocking() {
+        return cars.stream().filter(car -> (car.getX() == 2 && car.getY() >= getCarZero().getY())).collect(Collectors.toList()).size();
+    }
+
+    public int distanceToGoal() {
+        return COL_COUNT - getCarZero().getX()+1;
+    }
+
     public Optional<Car> getCarAt(int x, int y) {
         for (Car car: cars) {
             for (int[] cord: car.getCoordinatesOccupied()) {
