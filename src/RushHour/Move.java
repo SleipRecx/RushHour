@@ -1,11 +1,12 @@
+package RushHour;
 
 public class Move {
-    private State currentState;
+    private RushHour currentState;
     private Car car;
     private int destX;
     private int destY;
 
-    public Move(Car car, int destX, int destY, State state) {
+    public Move(Car car, int destX, int destY, RushHour state) {
         this.car = car;
         this.destX = destX;
         this.destY = destY;
@@ -49,8 +50,8 @@ public class Move {
         newCar.setX(destX);
         newCar.setY(destY);
         for (int[] cord: newCar.getCoordinatesOccupied()) {
-            if (cord[0] < 0 || cord[0] >= State.ROW_COUNT) return false;
-            if (cord[1] < 0 || cord[1] >= State.COL_COUNT) return false;
+            if (cord[0] < 0 || cord[0] >= RushHour.ROW_COUNT) return false;
+            if (cord[1] < 0 || cord[1] >= RushHour.COL_COUNT) return false;
             if (!currentState.isOpen(cord[0], cord[1])) {
                 if (currentState.getCarAt(cord[0], cord[1]).isPresent()) {
                     if (!currentState.getCarAt(cord[0],cord[1]).get().equals(car)) {

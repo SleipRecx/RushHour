@@ -1,15 +1,21 @@
+package RushHour;
+
+import Search.SearchProblem;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class State implements Comparable{
+public class RushHour implements SearchProblem {
 
     public final static int ROW_COUNT = 6;
     public final static int COL_COUNT = 6;
 
-    private Set<Car> cars;
+    private Set<Car> cars = new LinkedHashSet<>();
 
-    public State() {
-        this.cars = new LinkedHashSet<>();
+    public RushHour() {}
+
+    public RushHour(Set<Car> cars) {
+        this.cars = cars;
     }
 
     public boolean isOpen(int x, int y) {
@@ -43,8 +49,18 @@ public class State implements Comparable{
         return cars.iterator().next();
     }
 
-    public boolean isSolution() {
+    public Boolean isSolution() {
         return getCarAt(5, 2).isPresent() && getCarZero().equals(getCarAt(5, 2).get());
+    }
+
+    @Override
+    public Double h() {
+        return (double) (blocking() + distanceToGoal());
+    }
+
+    @Override
+    public Double g() {
+        return 0.0;
     }
 
     public void addCar(Car c) {
@@ -75,7 +91,7 @@ public class State implements Comparable{
         System.out.println();
     }
 
-    public Set<State> generateSuccessors(){
+    public Set<SearchProblem> generateSuccessors(){
         Set<Move> moves = new HashSet<>();
         getCars().forEach(car -> {
             Move m1 = new Move(car, car.getX(), car.getY() + 1, this);
@@ -87,13 +103,13 @@ public class State implements Comparable{
             if (m3.isLegal()) moves.add(m3);
             if (m4.isLegal()) moves.add(m4);
         });
-        Set<State> successors = new HashSet<>();
+        Set<SearchProblem> successors = new HashSet<>();
         moves.forEach(move -> successors.add(performMove(move)));
         return successors;
     }
 
-    public State performMove(Move move) {
-        State newState = cloneBoard();
+    public RushHour performMove(Move move) {
+        RushHour newState = cloneBoard();
         newState.cars.forEach(car -> {
             if (car.getX() == move.getCar().getX() && car.getY() == move.getCar().getY()) {
                 car.setX(move.getDestX());
@@ -103,8 +119,8 @@ public class State implements Comparable{
         return newState;
     }
 
-    public State cloneBoard() {
-        State newState = new State();
+    public RushHour cloneBoard() {
+        RushHour newState = new RushHour();
         cars.forEach(car -> {
             Car newCar = new Car(car.getQuadFormat());
             newState.getCars().add(newCar);
@@ -113,14 +129,9 @@ public class State implements Comparable{
     }
 
     @Override
-    public int compareTo(Object o) {
-        return 0;
-    }
-
-    @Override
     public boolean equals(Object o) {
-        if(o instanceof State){
-            State toCompare = (State) o;
+        if(o instanceof RushHour){
+            RushHour toCompare = (RushHour) o;
             return this.toString().equals(toCompare.toString());
         }
         return false;
@@ -133,7 +144,7 @@ public class State implements Comparable{
 
     @Override
     public String toString() {
-        return "State{" +
+        return "RushHour{" +
                 "cars=" + cars +
                 '}';
     }

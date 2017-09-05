@@ -1,3 +1,5 @@
+package RushHour;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -88,7 +90,7 @@ public class Car {
 
     @Override
     public String toString() {
-        return "Car{" +
+        return "RushHour.Car{" +
                 "vertical=" + vertical +
                 ", x=" + x +
                 ", y=" + y +
