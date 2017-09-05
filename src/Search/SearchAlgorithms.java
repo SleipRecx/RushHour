@@ -1,6 +1,41 @@
 package Search;
 import java.util.*;
 
+class SearchResult {
+
+    private List<SearchProblem> result;
+    private int operations;
+
+    public SearchResult(List<SearchProblem> result, int operations) {
+        this.result = result;
+        this.operations = operations;
+    }
+
+    public List<SearchProblem> getResult() {
+        return result;
+    }
+
+    public void setResult(List<SearchProblem> result) {
+        this.result = result;
+    }
+
+    public int getOperations() {
+        return operations;
+    }
+
+    public void setOperations(int operations) {
+        this.operations = operations;
+    }
+
+    @Override
+    public String toString() {
+        return "SearchResult{" +
+                "result=" + result +
+                ", operations=" + operations +
+                '}';
+    }
+}
+
 public class SearchAlgorithms {
 
     public static List<SearchProblem> bfs(SearchProblem root) {
