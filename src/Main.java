@@ -1,5 +1,5 @@
 import Search.SearchAlgorithms;
-import Search.SearchProblem;
+import Search.SearchNode;
 import RushHour.*;
 
 import java.util.LinkedHashSet;
@@ -15,10 +15,10 @@ public class Main {
         cars.add(new Car(new int[]{0, 4, 1, 2}));
         cars.add(new Car(new int[]{1, 2, 0, 2}));
         cars.add(new Car(new int[]{1, 4, 2, 2}));
-        SearchProblem rushHour = new RushHour(cars);
+        SearchNode rushHour = new RushHour(cars);
 
-        //SearchAlgorithms.bfs(rushHour).forEach(SearchProblem::print);
-        //SearchAlgorithms.dfs(rushHour).forEach(SearchProblem::print);
-        SearchAlgorithms.AStar(rushHour).forEach(SearchProblem::print);
+        //SearchAlgorithms.breadthFirstSearch(rushHour).forEach(SearchNode::print);
+        SearchAlgorithms.depthFirstSearch(rushHour).forEach(SearchNode::print);
+        //SearchAlgorithms.AStar(rushHour).forEach(SearchNode::print);
     }
 }

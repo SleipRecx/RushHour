@@ -1,11 +1,11 @@
 package RushHour;
 
-import Search.SearchProblem;
+import Search.SearchNode;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RushHour implements SearchProblem {
+public class RushHour implements SearchNode {
 
     public final static int ROW_COUNT = 6;
     public final static int COL_COUNT = 6;
@@ -91,7 +91,7 @@ public class RushHour implements SearchProblem {
         System.out.println();
     }
 
-    public Set<SearchProblem> generateSuccessors(){
+    public Set<SearchNode> generateSuccessors(){
         Set<Move> moves = new HashSet<>();
         getCars().forEach(car -> {
             Move m1 = new Move(car, car.getX(), car.getY() + 1, this);
@@ -103,7 +103,7 @@ public class RushHour implements SearchProblem {
             if (m3.isLegal()) moves.add(m3);
             if (m4.isLegal()) moves.add(m4);
         });
-        Set<SearchProblem> successors = new HashSet<>();
+        Set<SearchNode> successors = new HashSet<>();
         moves.forEach(move -> successors.add(performMove(move)));
         return successors;
     }

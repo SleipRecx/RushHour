@@ -2,11 +2,11 @@ package Search;
 
 import java.util.Set;
 
-public interface SearchProblem {
+public interface SearchNode {
     Boolean isSolution();
     Double h();
     Double g();
-    Set<SearchProblem> generateSuccessors();
+    Set<SearchNode> generateSuccessors();
     void print();
 
 }

@@ -1,55 +1,20 @@
 package Search;
 import java.util.*;
 
-class SearchResult {
-
-    private List<SearchProblem> result;
-    private int operations;
-
-    public SearchResult(List<SearchProblem> result, int operations) {
-        this.result = result;
-        this.operations = operations;
-    }
-
-    public List<SearchProblem> getResult() {
-        return result;
-    }
-
-    public void setResult(List<SearchProblem> result) {
-        this.result = result;
-    }
-
-    public int getOperations() {
-        return operations;
-    }
-
-    public void setOperations(int operations) {
-        this.operations = operations;
-    }
-
-    @Override
-    public String toString() {
-        return "SearchResult{" +
-                "result=" + result +
-                ", operations=" + operations +
-                '}';
-    }
-}
-
 public class SearchAlgorithms {
 
-    public static List<SearchProblem> bfs(SearchProblem root) {
-        Map<SearchProblem, SearchProblem> cameFrom = new HashMap<>();
-        Set<SearchProblem> visited = new HashSet<>();
-        List<SearchProblem> queue = new ArrayList<>();
+    public static List<SearchNode> breadthFirstSearch(SearchNode root) {
+        Map<SearchNode, SearchNode> cameFrom = new HashMap<>();
+        Set<SearchNode> visited = new HashSet<>();
+        List<SearchNode> queue = new ArrayList<>();
         queue.add(root);
         visited.add(root);
         while (queue.size() > 0) {
-            SearchProblem current = queue.remove(0);
+            SearchNode current = queue.remove(0);
             if (current.isSolution()) {
                 return reconstructPath(cameFrom, current);
             }
-            for (SearchProblem successor: current.generateSuccessors()) {
+            for (SearchNode successor: current.generateSuccessors()) {
                 if (!visited.contains(successor)) {
                     visited.add(successor);
                     queue.add(successor);
@@ -60,34 +25,34 @@ public class SearchAlgorithms {
         throw new IllegalStateException("No solution found");
     }
 
-    public static List<SearchProblem> dfs(SearchProblem root) {
-        Stack<SearchProblem> stack = new Stack<>();
-        List<SearchProblem> discovered = new ArrayList<>();
-        stack.push(root);
-
-        while (!stack.isEmpty()) {
-            SearchProblem v = stack.pop();
-
-            if (!discovered.contains(v)) {
-                discovered.add(v);
-                for (SearchProblem sp: v.generateSuccessors()) {
-                    stack.push(sp);
+    public static List<SearchNode> depthFirstSearch(SearchNode root) {
+        Map<SearchNode, SearchNode> cameFrom = new HashMap<>();
+        Set<SearchNode> closed = new HashSet<>();
+        Stack<SearchNode> open = new Stack<>();
+        open.push(root);
+        while (open.size() > 0){
+            SearchNode current = open.pop();
+            current.print();
+            if (current.isSolution()) {
+                System.out.println("yeeah");
+                return reconstructPath(cameFrom, current);
+            }
+            if (!closed.contains(current)){
+                closed.add(current);
+                for (SearchNode successor: current.generateSuccessors()) {
+                    open.push(successor);
+                    cameFrom.put(successor, current);
                 }
             }
 
-            if(v.isSolution()) {
-                System.out.println("sol");
-                return discovered;
-            }
-
         }
-        return null;
+        throw new IllegalStateException("No solution found");
     }
 
 
-    public static List<SearchProblem> reconstructPath(Map<SearchProblem, SearchProblem> cameFrom, SearchProblem goalState) {
-        List<SearchProblem> path = new ArrayList<>();
-        SearchProblem current = goalState;
+    public static List<SearchNode> reconstructPath(Map<SearchNode, SearchNode> cameFrom, SearchNode goalState) {
+        List<SearchNode> path = new ArrayList<>();
+        SearchNode current = goalState;
         while(cameFrom.containsKey(current)) {
             path.add(current);
             current = cameFrom.get(current);
@@ -97,13 +62,13 @@ public class SearchAlgorithms {
     }
 
 
-    public static List<SearchProblem> AStar(SearchProblem start) {
+    public static List<SearchNode> AStar(SearchNode start) {
 
         Set closedSet = new LinkedHashSet();
-        Queue<SearchProblem> openSet = new LinkedList<>();
-        Map<SearchProblem, SearchProblem> cameFrom = new HashMap<>();
-        Map<SearchProblem, Double> gScore = new HashMap<>();
-        Map<SearchProblem, Double> fScore = new HashMap<>();
+        Queue<SearchNode> openSet = new LinkedList<>();
+        Map<SearchNode, SearchNode> cameFrom = new HashMap<>();
+        Map<SearchNode, Double> gScore = new HashMap<>();
+        Map<SearchNode, Double> fScore = new HashMap<>();
 
         openSet.add(start);
         gScore.put(start, 0.0);
@@ -113,9 +78,9 @@ public class SearchAlgorithms {
         while(!openSet.isEmpty()) {
 
             // get the node from openSet with lowest fScore. TODO: refactor
-            SearchProblem current = openSet.peek();
+            SearchNode current = openSet.peek();
             double value = fScore.get(current);
-            for(SearchProblem s: openSet) {
+            for(SearchNode s: openSet) {
                 if (fScore.get(s) < value) {
                     current = s;
                 }
@@ -135,7 +100,7 @@ public class SearchAlgorithms {
             openSet.remove(current);
             closedSet.add(current);
 
-            for (SearchProblem successor: current.generateSuccessors()) {
+            for (SearchNode successor: current.generateSuccessors()) {
                 if (closedSet.contains(successor)) {
                     continue;
                 }
