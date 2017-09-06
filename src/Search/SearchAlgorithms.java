@@ -3,21 +3,22 @@ import java.util.*;
 
 public class SearchAlgorithms {
 
-    public static List<SearchNode> breadthFirstSearch(SearchNode root) {
+    public static SearchResult breadthFirstSearch(SearchNode root) {
         Map<SearchNode, SearchNode> cameFrom = new HashMap<>();
-        Set<SearchNode> visited = new HashSet<>();
-        List<SearchNode> queue = new ArrayList<>();
-        queue.add(root);
-        visited.add(root);
-        while (queue.size() > 0) {
-            SearchNode current = queue.remove(0);
+        Set<SearchNode> closed = new HashSet<>();
+        List<SearchNode> open = new ArrayList<>();
+        open.add(root);
+        closed.add(root);
+        while (open.size() > 0) {
+            SearchNode current = open.remove(0);
             if (current.isSolution()) {
-                return reconstructPath(cameFrom, current);
+                List<SearchNode> path = reconstructPath(cameFrom, current);
+                return new SearchResult(path, open.size(), closed.size(), "Breadth First Search");
             }
             for (SearchNode successor: current.generateSuccessors()) {
-                if (!visited.contains(successor)) {
-                    visited.add(successor);
-                    queue.add(successor);
+                if (!closed.contains(successor)) {
+                    closed.add(successor);
+                    open.add(successor);
                     cameFrom.put(successor, current);
                 }
             }
@@ -32,9 +33,7 @@ public class SearchAlgorithms {
         open.push(root);
         while (open.size() > 0){
             SearchNode current = open.pop();
-            current.print();
             if (current.isSolution()) {
-                System.out.println("yeeah");
                 return reconstructPath(cameFrom, current);
             }
             if (!closed.contains(current)){
@@ -50,7 +49,7 @@ public class SearchAlgorithms {
     }
 
 
-    public static List<SearchNode> reconstructPath(Map<SearchNode, SearchNode> cameFrom, SearchNode goalState) {
+    private static List<SearchNode> reconstructPath(Map<SearchNode, SearchNode> cameFrom, SearchNode goalState) {
         List<SearchNode> path = new ArrayList<>();
         SearchNode current = goalState;
         while(cameFrom.containsKey(current)) {
@@ -62,25 +61,25 @@ public class SearchAlgorithms {
     }
 
 
-    public static List<SearchNode> AStar(SearchNode start) {
+    public static SearchResult AStar(SearchNode start) {
 
-        Set closedSet = new LinkedHashSet();
-        Queue<SearchNode> openSet = new LinkedList<>();
+        Set closed = new LinkedHashSet();
+        Queue<SearchNode> open = new LinkedList<>();
         Map<SearchNode, SearchNode> cameFrom = new HashMap<>();
         Map<SearchNode, Double> gScore = new HashMap<>();
         Map<SearchNode, Double> fScore = new HashMap<>();
 
-        openSet.add(start);
+        open.add(start);
         gScore.put(start, 0.0);
         fScore.put(start, start.h());
 
         int moves = 0;
-        while(!openSet.isEmpty()) {
+        while(!open.isEmpty()) {
 
             // get the node from openSet with lowest fScore. TODO: refactor
-            SearchNode current = openSet.peek();
+            SearchNode current = open.peek();
             double value = fScore.get(current);
-            for(SearchNode s: openSet) {
+            for(SearchNode s: open) {
                 if (fScore.get(s) < value) {
                     current = s;
                 }
@@ -92,21 +91,21 @@ public class SearchAlgorithms {
             }
 
             if(current.isSolution()) {
-                System.out.println("Found solution! (in "+ moves +" moves)");
-                System.out.println(moves);
-                return reconstructPath(cameFrom, current);
+                List<SearchNode> path = reconstructPath(cameFrom, current);
+                return new SearchResult(path, open.size(), closed.size(), "A Star");
             }
 
-            openSet.remove(current);
-            closedSet.add(current);
+            open.remove(current);
+            closed.add(current);
 
             for (SearchNode successor: current.generateSuccessors()) {
-                if (closedSet.contains(successor)) {
+                if (closed.contains(successor)) {
                     continue;
                 }
-                if (!openSet.contains(successor)) {
-                    openSet.add(successor);
+                if (!open.contains(successor)) {
+                    open.add(successor);
                     fScore.put(successor, Double.POSITIVE_INFINITY);
+
                 }
 
                 // gScore[current] + distance from current to neighbor (always 1?)

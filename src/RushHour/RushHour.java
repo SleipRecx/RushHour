@@ -2,20 +2,66 @@ package RushHour;
 
 import Search.SearchNode;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RushHour implements SearchNode {
 
-    public final static int ROW_COUNT = 6;
-    public final static int COL_COUNT = 6;
+    final static int ROW_COUNT = 6;
+    final static int COL_COUNT = 6;
+
+    private Double g = 0.0;
+    private Double h = 0.0;
 
     private Set<Car> cars = new LinkedHashSet<>();
 
     public RushHour() {}
 
-    public RushHour(Set<Car> cars) {
-        this.cars = cars;
+    public RushHour(String filename) throws IOException {
+        try (Stream<String> stream = Files.lines(Paths.get(filename))) {
+            stream.forEach(line -> {
+                int[] quad = Arrays.stream(line.split(",")).mapToInt(Integer::parseInt).toArray();
+                cars.add(new Car(quad));
+            });
+        }
+    }
+
+    @Override
+    public Set<SearchNode> generateSuccessors(){
+        Set<Move> moves = new HashSet<>();
+        getCars().forEach(car -> {
+            Move m1 = new Move(car, car.getX(), car.getY() + 1, this);
+            Move m2 = new Move(car, car.getX(), car.getY() - 1, this);
+            Move m3 = new Move(car, car.getX() + 1, car.getY(), this);
+            Move m4 = new Move(car, car.getX() - 1, car.getY(), this);
+            if (m1.isLegal()) moves.add(m1);
+            if (m2.isLegal()) moves.add(m2);
+            if (m3.isLegal()) moves.add(m3);
+            if (m4.isLegal()) moves.add(m4);
+        });
+        Set<SearchNode> successors = new HashSet<>();
+        moves.forEach(move -> successors.add(performMove(move)));
+        return successors;
+    }
+
+    @Override
+    public Double h() {
+        return (double) (getBlockingCars() + distanceToGoal());
+    }
+
+    @Override
+    public Double g() {
+        return 1.0;
+    }
+
+    @Override
+    public Boolean isSolution() {
+        return getCarZero().getCoordinatesOccupied().stream()
+                .filter(cord -> cord[0] == 5 && cord[1] == 2).collect(Collectors.toSet()).size() > 0;
     }
 
     public boolean isOpen(int x, int y) {
@@ -26,11 +72,19 @@ public class RushHour implements SearchNode {
                 .collect(Collectors.toSet()).isEmpty();
     }
 
-    public int blocking() {
-        return cars.stream().filter(car -> (car.getX() == 2 && car.getY() >= getCarZero().getY())).collect(Collectors.toList()).size();
+    public int getBlockingCars() {
+        List<Car> blockingCars = cars.stream().filter(car -> !car.equals(getCarZero())).filter(car -> {
+            for (int[] cord: car.getCoordinatesOccupied()) {
+                if (cord[1] == 2 && cord[0] > getCarZero().getX()) {
+                    return true;
+                }
+            }
+            return false;
+        }).collect(Collectors.toList());
+        return blockingCars.size();
     }
 
-    public int distanceToGoal() {
+    private int distanceToGoal() {
         return COL_COUNT - getCarZero().getX()+1;
     }
 
@@ -45,29 +99,11 @@ public class RushHour implements SearchNode {
         return Optional.empty();
     }
 
-    public Car getCarZero() {
+    private Car getCarZero() {
         return cars.iterator().next();
     }
 
-    public Boolean isSolution() {
-        return getCarAt(5, 2).isPresent() && getCarZero().equals(getCarAt(5, 2).get());
-    }
-
-    @Override
-    public Double h() {
-        return (double) (blocking() + distanceToGoal());
-    }
-
-    @Override
-    public Double g() {
-        return 1.0;
-    }
-
-    public void addCar(Car c) {
-        cars.add(c);
-    }
-
-    public Set<Car> getCars() {
+    private Set<Car> getCars() {
         return cars;
     }
 
@@ -91,24 +127,7 @@ public class RushHour implements SearchNode {
         System.out.println();
     }
 
-    public Set<SearchNode> generateSuccessors(){
-        Set<Move> moves = new HashSet<>();
-        getCars().forEach(car -> {
-            Move m1 = new Move(car, car.getX(), car.getY() + 1, this);
-            Move m2 = new Move(car, car.getX(), car.getY() - 1, this);
-            Move m3 = new Move(car, car.getX() + 1, car.getY(), this);
-            Move m4 = new Move(car, car.getX() - 1, car.getY(), this);
-            if (m1.isLegal()) moves.add(m1);
-            if (m2.isLegal()) moves.add(m2);
-            if (m3.isLegal()) moves.add(m3);
-            if (m4.isLegal()) moves.add(m4);
-        });
-        Set<SearchNode> successors = new HashSet<>();
-        moves.forEach(move -> successors.add(performMove(move)));
-        return successors;
-    }
-
-    public RushHour performMove(Move move) {
+    private RushHour performMove(Move move) {
         RushHour newState = cloneBoard();
         newState.cars.forEach(car -> {
             if (car.getX() == move.getCar().getX() && car.getY() == move.getCar().getY()) {
@@ -119,7 +138,7 @@ public class RushHour implements SearchNode {
         return newState;
     }
 
-    public RushHour cloneBoard() {
+    private RushHour cloneBoard() {
         RushHour newState = new RushHour();
         cars.forEach(car -> {
             Car newCar = new Car(car.getQuadFormat());
@@ -147,5 +166,21 @@ public class RushHour implements SearchNode {
         return "RushHour{" +
                 "cars=" + cars +
                 '}';
+    }
+
+    public Double getG() {
+        return g;
+    }
+
+    public void setG(Double g) {
+        this.g = g;
+    }
+
+    public Double getH() {
+        return h;
+    }
+
+    public void setH(Double h) {
+        this.h = h;
     }
 }

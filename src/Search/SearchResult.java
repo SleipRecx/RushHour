@@ -3,36 +3,42 @@ package Search;
 import java.util.List;
 
 public class SearchResult {
+    private String algorithm;
+    private List<SearchNode> path;
+    private int expanded;
+    private int visited;
 
-    private List<SearchNode> result;
-    private int operations;
-
-    public SearchResult(List<SearchNode> result, int operations) {
-        this.result = result;
-        this.operations = operations;
+    public SearchResult(List<SearchNode> path, int expanded, int visited, String algorithm) {
+        this.path = path;
+        this.expanded = expanded;
+        this.visited = visited;
+        this.algorithm = algorithm;
     }
 
-    public List<SearchNode> getResult() {
-        return result;
+    public List<SearchNode> getPath() {
+        return path;
     }
 
-    public void setResult(List<SearchNode> result) {
-        this.result = result;
+    public int getPathLength() {
+        return path.size();
     }
 
-    public int getOperations() {
-        return operations;
+    public int getExpanded() {
+        return expanded;
     }
 
-    public void setOperations(int operations) {
-        this.operations = operations;
+    public int getVisited() {
+        return visited;
     }
 
     @Override
     public String toString() {
-        return "SearchResult{" +
-                "result=" + result +
-                ", operations=" + operations +
-                '}';
+        int totalNodes = visited + expanded;
+        return "SearchResult:" + "\n" +
+                "Algorithm = " + algorithm + "\n" +
+                "Moves in solution = " + getPathLength() + "\n" +
+                "Expanded nodes = " + expanded + "\n" +
+                "Visited nodes = " + visited + "\n" +
+                "Total nodes = " + totalNodes + "\n";
     }
 }
