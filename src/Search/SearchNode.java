@@ -4,9 +4,11 @@ import java.util.Set;
 
 public interface SearchNode {
     Set<SearchNode> generateSuccessors();
+    Boolean isSolution();
     SearchNode getParent();
     void setParent(SearchNode parent);
-    Boolean isSolution();
-    Double h();
-    Double g();
+    Double arcCost(SearchNode node);
+    void setG(Double g);
+    Double getG();
+    Double getH();
 }

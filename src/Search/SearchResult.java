@@ -6,13 +6,14 @@ import java.util.List;
 public class SearchResult {
     private String algorithm;
     private SearchNode goal;
-    private int expanded;
-    private int visited;
+    private int totalNodes;
+    private long timeElapsed;
 
-    public SearchResult(SearchNode goal, int expanded, int visited, String algorithm) {
+
+    public SearchResult(SearchNode goal, int totalNodes, long timeElapsed, String algorithm) {
         this.goal = goal;
-        this.expanded = expanded;
-        this.visited = visited;
+        this.totalNodes = totalNodes;
+        this.timeElapsed = timeElapsed;
         this.algorithm = algorithm;
     }
 
@@ -28,13 +29,11 @@ public class SearchResult {
 
     @Override
     public String toString() {
-        int totalNodes = visited + expanded;
         return "SearchResult:" + "\n" +
                 "Algorithm = " + algorithm + "\n" +
                 "Moves in solution = " + extractPath().size() + "\n" +
-                "Expanded nodes = " + expanded + "\n" +
-                "Visited nodes = " + visited + "\n" +
-                "Total nodes = " + totalNodes + "\n";
+                "Time Elapsed = " + this.timeElapsed / 1000 + " seconds" + "\n" +
+                "Total nodes = " + this.totalNodes + "\n";
     }
 
 }

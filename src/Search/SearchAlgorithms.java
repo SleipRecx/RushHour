@@ -4,6 +4,7 @@ import java.util.*;
 public class SearchAlgorithms {
 
     public static SearchResult breadthFirstSearch(SearchNode root) {
+        long startTime = System.currentTimeMillis();
         Set<SearchNode> closed = new HashSet<>();
         List<SearchNode> open = new ArrayList<>();
         open.add(root);
@@ -11,7 +12,8 @@ public class SearchAlgorithms {
         while (open.size() > 0) {
             SearchNode current = open.remove(0);
             if (current.isSolution()) {
-                return new SearchResult(current, open.size(), closed.size(), "Breadth First");
+                long timeElapsed = System.currentTimeMillis() - startTime;
+                return new SearchResult(current, closed.size() + open.size(), timeElapsed, "Breadth First");
             }
             for (SearchNode successor: current.generateSuccessors()) {
                 if (!closed.contains(successor)) {
@@ -25,13 +27,15 @@ public class SearchAlgorithms {
     }
 
     public static SearchResult depthFirstSearch(SearchNode root) {
+        long startTime = System.currentTimeMillis();
         Set<SearchNode> closed = new HashSet<>();
         Stack<SearchNode> open = new Stack<>();
         open.push(root);
         while (open.size() > 0){
             SearchNode current = open.pop();
             if (current.isSolution()) {
-                return new SearchResult(current, open.size(), closed.size(), "Depth First");
+                long timeElapsed = System.currentTimeMillis() - startTime;
+                return new SearchResult(current, open.size() + closed.size(), timeElapsed, "Depth First");
             }
             if (!closed.contains(current)){
                 closed.add(current);
@@ -45,68 +49,47 @@ public class SearchAlgorithms {
         throw new IllegalStateException("No solution found");
     }
 
-    
-    public static SearchResult AStar(SearchNode start) {
 
-        Set closed = new LinkedHashSet();
-        Queue<SearchNode> open = new LinkedList<>();
-        Map<SearchNode, Double> gScore = new HashMap<>();
-        Map<SearchNode, Double> fScore = new HashMap<>();
-
-        open.add(start);
-        gScore.put(start, 0.0);
-        fScore.put(start, start.h());
-
-        int moves = 0;
-        while(!open.isEmpty()) {
-
-            // get the node from openSet with lowest fScore. TODO: refactor
-            SearchNode current = open.peek();
-            double value = fScore.get(current);
-            for(SearchNode s: open) {
-                if (fScore.get(s) < value) {
-                    current = s;
-                }
-            }
-
-
-            if(!gScore.containsKey(current)) {
-                gScore.put(current, (double) moves);
-            }
-
-            if(current.isSolution()) {
-                return new SearchResult(current, open.size(), closed.size(), "A Star");
-            }
-
-            open.remove(current);
+    public static SearchResult AStar(SearchNode root) {
+        long startTime = System.currentTimeMillis();
+        Set<SearchNode> closed = new HashSet<>();
+        Queue<SearchNode> open = new PriorityQueue<>((o1, o2) -> o1.getG() + o1.getH() < o2.getG() + o2.getH() ? -1:1);
+        open.add(root);
+        while (open.size() > 0){
+            SearchNode current = open.poll();
             closed.add(current);
-
-            for (SearchNode successor: current.generateSuccessors()) {
-                if (closed.contains(successor)) {
-                    continue;
-                }
-                if (!open.contains(successor)) {
-                    open.add(successor);
-                    fScore.put(successor, Double.POSITIVE_INFINITY);
-
-                }
-
-                // gScore[current] + distance from current to neighbor (always 1?)
-                double tentativeGScore = gScore.get(current) + 1;
-                if (tentativeGScore >= gScore.get(current)) {
-
-                }
-                successor.setParent(current);
-                gScore.put(successor, tentativeGScore);
-                fScore.put(successor, gScore.get(successor) + successor.h());
-
+            if (current.isSolution()) {
+                long timeElapsed = System.currentTimeMillis() - startTime;
+                return new SearchResult(current, open.size() + closed.size(), timeElapsed, "A star");
             }
-
-            moves++;
-
+            for (SearchNode successor: current.generateSuccessors()) {
+                if ((!open.contains(successor)) && (!closed.contains(successor))) {
+                    // Successor is never explored or visited before.
+                    successor.setParent(current);
+                    successor.setG(current.getG() + current.arcCost(successor));
+                    open.add(successor);
+                }
+                else if (current.getG() + current.arcCost(successor) < successor.getG()) {
+                    // We found a cheaper path to successor.
+                    successor.setParent(current);
+                    successor.setG(current.getG() + current.arcCost(successor));
+                    if (closed.contains(successor)) {
+                        propagatePathImprovements(successor);
+                    }
+                }
+            }
         }
-        return null;
+        throw new IllegalStateException("No solution found");
+    }
 
+    private static void propagatePathImprovements(SearchNode current) {
+        for (SearchNode successor: current.generateSuccessors()) {
+            if (current.getG() + current.arcCost(successor) < successor.getG()) {
+                successor.setParent(current);
+                successor.setG(current.getG() + current.arcCost(successor));
+                propagatePathImprovements(successor);
+            }
+        }
     }
 
 

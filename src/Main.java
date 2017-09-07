@@ -10,9 +10,9 @@ import java.util.Set;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        SearchNode rushHour = new RushHour("boards/easy.txt");
+        SearchNode rushHour = new RushHour("boards/hard.txt");
         System.out.println(SearchAlgorithms.breadthFirstSearch(rushHour));
-        System.out.println(SearchAlgorithms.depthFirstSearch(rushHour));
+       // System.out.println(SearchAlgorithms.depthFirstSearch(rushHour));
         System.out.println(SearchAlgorithms.AStar(rushHour));
     }
 }

@@ -15,7 +15,6 @@ public class RushHour implements SearchNode {
     final static int COL_COUNT = 6;
 
     private Double g = 0.0;
-    private Double h = 0.0;
 
     private SearchNode parent;
 
@@ -56,18 +55,28 @@ public class RushHour implements SearchNode {
     }
 
     @Override
+    public Double arcCost(SearchNode node) {
+        return 1.0;
+    }
+
+    @Override
     public void setParent(SearchNode parent) {
         this.parent = parent;
     }
 
     @Override
-    public Double h() {
-        return (double) (getBlockingCars() + distanceToGoal());
+    public void setG(Double g) {
+        this.g = g;
     }
 
     @Override
-    public Double g() {
-        return 1.0;
+    public Double getG() {
+        return this.g;
+    }
+
+    @Override
+    public Double getH() {
+        return (double) distanceToGoal();
     }
 
     @Override
@@ -178,21 +187,5 @@ public class RushHour implements SearchNode {
         return "RushHour{" +
                 "cars=" + cars +
                 '}';
-    }
-
-    public Double getG() {
-        return g;
-    }
-
-    public void setG(Double g) {
-        this.g = g;
-    }
-
-    public Double getH() {
-        return h;
-    }
-
-    public void setH(Double h) {
-        this.h = h;
     }
 }
