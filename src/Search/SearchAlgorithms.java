@@ -4,7 +4,6 @@ import java.util.*;
 public class SearchAlgorithms {
 
     public static SearchResult breadthFirstSearch(SearchNode root) {
-        Map<SearchNode, SearchNode> cameFrom = new HashMap<>();
         Set<SearchNode> closed = new HashSet<>();
         List<SearchNode> open = new ArrayList<>();
         open.add(root);
@@ -12,35 +11,33 @@ public class SearchAlgorithms {
         while (open.size() > 0) {
             SearchNode current = open.remove(0);
             if (current.isSolution()) {
-                List<SearchNode> path = reconstructPath(cameFrom, current);
-                return new SearchResult(path, open.size(), closed.size(), "Breadth First Search");
+                return new SearchResult(current, open.size(), closed.size(), "Breadth First");
             }
             for (SearchNode successor: current.generateSuccessors()) {
                 if (!closed.contains(successor)) {
                     closed.add(successor);
                     open.add(successor);
-                    cameFrom.put(successor, current);
+                    successor.setParent(current);
                 }
             }
         }
         throw new IllegalStateException("No solution found");
     }
 
-    public static List<SearchNode> depthFirstSearch(SearchNode root) {
-        Map<SearchNode, SearchNode> cameFrom = new HashMap<>();
+    public static SearchResult depthFirstSearch(SearchNode root) {
         Set<SearchNode> closed = new HashSet<>();
         Stack<SearchNode> open = new Stack<>();
         open.push(root);
         while (open.size() > 0){
             SearchNode current = open.pop();
             if (current.isSolution()) {
-                return reconstructPath(cameFrom, current);
+                return new SearchResult(current, open.size(), closed.size(), "Depth First");
             }
             if (!closed.contains(current)){
                 closed.add(current);
                 for (SearchNode successor: current.generateSuccessors()) {
                     open.push(successor);
-                    cameFrom.put(successor, current);
+                    successor.setParent(current);
                 }
             }
 
@@ -48,24 +45,11 @@ public class SearchAlgorithms {
         throw new IllegalStateException("No solution found");
     }
 
-
-    private static List<SearchNode> reconstructPath(Map<SearchNode, SearchNode> cameFrom, SearchNode goalState) {
-        List<SearchNode> path = new ArrayList<>();
-        SearchNode current = goalState;
-        while(cameFrom.containsKey(current)) {
-            path.add(current);
-            current = cameFrom.get(current);
-        }
-        Collections.reverse(path);
-        return path;
-    }
-
-
+    
     public static SearchResult AStar(SearchNode start) {
 
         Set closed = new LinkedHashSet();
         Queue<SearchNode> open = new LinkedList<>();
-        Map<SearchNode, SearchNode> cameFrom = new HashMap<>();
         Map<SearchNode, Double> gScore = new HashMap<>();
         Map<SearchNode, Double> fScore = new HashMap<>();
 
@@ -91,8 +75,7 @@ public class SearchAlgorithms {
             }
 
             if(current.isSolution()) {
-                List<SearchNode> path = reconstructPath(cameFrom, current);
-                return new SearchResult(path, open.size(), closed.size(), "A Star");
+                return new SearchResult(current, open.size(), closed.size(), "A Star");
             }
 
             open.remove(current);
@@ -111,9 +94,9 @@ public class SearchAlgorithms {
                 // gScore[current] + distance from current to neighbor (always 1?)
                 double tentativeGScore = gScore.get(current) + 1;
                 if (tentativeGScore >= gScore.get(current)) {
-                }
 
-                cameFrom.put(successor, current);
+                }
+                successor.setParent(current);
                 gScore.put(successor, tentativeGScore);
                 fScore.put(successor, gScore.get(successor) + successor.h());
 

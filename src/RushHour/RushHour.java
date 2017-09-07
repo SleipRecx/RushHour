@@ -17,6 +17,8 @@ public class RushHour implements SearchNode {
     private Double g = 0.0;
     private Double h = 0.0;
 
+    private SearchNode parent;
+
     private Set<Car> cars = new LinkedHashSet<>();
 
     public RushHour() {}
@@ -46,6 +48,16 @@ public class RushHour implements SearchNode {
         Set<SearchNode> successors = new HashSet<>();
         moves.forEach(move -> successors.add(performMove(move)));
         return successors;
+    }
+
+    @Override
+    public SearchNode getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setParent(SearchNode parent) {
+        this.parent = parent;
     }
 
     @Override

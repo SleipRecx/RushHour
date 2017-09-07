@@ -1,34 +1,29 @@
 package Search;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchResult {
     private String algorithm;
-    private List<SearchNode> path;
+    private SearchNode goal;
     private int expanded;
     private int visited;
 
-    public SearchResult(List<SearchNode> path, int expanded, int visited, String algorithm) {
-        this.path = path;
+    public SearchResult(SearchNode goal, int expanded, int visited, String algorithm) {
+        this.goal = goal;
         this.expanded = expanded;
         this.visited = visited;
         this.algorithm = algorithm;
     }
 
-    public List<SearchNode> getPath() {
+    List<SearchNode> extractPath() {
+        List<SearchNode> path = new ArrayList<>();
+        SearchNode current = this.goal;
+        while (current.getParent() != null){
+            path.add(current);
+            current = current.getParent();
+        }
         return path;
-    }
-
-    public int getPathLength() {
-        return path.size();
-    }
-
-    public int getExpanded() {
-        return expanded;
-    }
-
-    public int getVisited() {
-        return visited;
     }
 
     @Override
@@ -36,9 +31,10 @@ public class SearchResult {
         int totalNodes = visited + expanded;
         return "SearchResult:" + "\n" +
                 "Algorithm = " + algorithm + "\n" +
-                "Moves in solution = " + getPathLength() + "\n" +
+                "Moves in solution = " + extractPath().size() + "\n" +
                 "Expanded nodes = " + expanded + "\n" +
                 "Visited nodes = " + visited + "\n" +
                 "Total nodes = " + totalNodes + "\n";
     }
+
 }
