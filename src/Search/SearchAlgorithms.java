@@ -1,5 +1,7 @@
 package Search;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SearchAlgorithms {
 
@@ -53,14 +55,13 @@ public class SearchAlgorithms {
     public static SearchResult AStar(SearchNode root) {
         long startTime = System.currentTimeMillis();
         Set<SearchNode> closed = new HashSet<>();
-        Queue<SearchNode> open = new PriorityQueue<>((o1, o2) -> o1.getG() + o1.getH() < o2.getG() + o2.getH() ? -1:1);
+        Queue<SearchNode> open = new PriorityQueue<>((o1, o2) -> o1.getF() < o2.getF() ? -1 : 1);
         open.add(root);
         while (open.size() > 0){
             SearchNode current = open.poll();
             closed.add(current);
             if (current.isSolution()) {
-                long timeElapsed = System.currentTimeMillis() - startTime;
-                return new SearchResult(current, open.size() + closed.size(), timeElapsed, "A star");
+                return new SearchResult(current, open.size() + closed.size(), System.currentTimeMillis() - startTime, "A star");
             }
             for (SearchNode successor: current.generateSuccessors()) {
                 if ((!open.contains(successor)) && (!closed.contains(successor))) {

@@ -70,13 +70,13 @@ public class RushHour implements SearchNode {
     }
 
     @Override
-    public Double getG() {
-        return this.g;
+    public Double getF() {
+        return this.g + (double) distanceToGoal() + getBlockingCars();
     }
 
     @Override
-    public Double getH() {
-        return (double) distanceToGoal();
+    public Double getG() {
+        return this.g;
     }
 
     @Override

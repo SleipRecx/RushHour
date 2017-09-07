@@ -10,5 +10,5 @@ public interface SearchNode {
     Double arcCost(SearchNode node);
     void setG(Double g);
     Double getG();
-    Double getH();
+    Double getF();
 }
