@@ -37,7 +37,6 @@ public class SearchResult {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println();
         });
     }
 

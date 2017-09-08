@@ -171,6 +171,7 @@ public class RushHour implements SearchNode {
             }
             System.out.println();
         }
+        System.out.println();
     }
 
     private RushHour performMove(Move move) {
