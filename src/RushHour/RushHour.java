@@ -1,7 +1,7 @@
 package RushHour;
 
+import Helpers.ConsoleColors;
 import Search.SearchNode;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -128,8 +128,23 @@ public class RushHour implements SearchNode {
         return cars;
     }
 
-    public void print() {
+    public void printState() {
         String[][] board = new String[ROW_COUNT][COL_COUNT];
+        List<String> colors = new ArrayList<>();
+        colors.add(ConsoleColors.RED_BACKGROUND_BRIGHT);
+        colors.add(ConsoleColors.CYAN_BACKGROUND);
+        colors.add(ConsoleColors.BLUE_BACKGROUND);
+        colors.add(ConsoleColors.GREEN_BACKGROUND);
+        colors.add(ConsoleColors.PURPLE_BACKGROUND);
+        colors.add(ConsoleColors.RED_BACKGROUND);
+        colors.add(ConsoleColors.YELLOW_BACKGROUND);
+        colors.add(ConsoleColors.CYAN_BACKGROUND_BRIGHT);
+        colors.add(ConsoleColors.BLUE_BACKGROUND_BRIGHT);
+        colors.add(ConsoleColors.GREEN_BACKGROUND_BRIGHT);
+        colors.add(ConsoleColors.PURPLE_BACKGROUND_BRIGHT);
+        colors.add(ConsoleColors.YELLOW_BACKGROUND_BRIGHT);
+        colors.add(ConsoleColors.WHITE_BACKGROUND_BRIGHT);
+
         for (String[] row : board) {
             Arrays.fill(row, "*");
         }
@@ -143,9 +158,19 @@ public class RushHour implements SearchNode {
             counter++;
         }
         for (String[] row : board) {
-            System.out.println(Arrays.toString(row));
+            for (String digit: row) {
+                if (digit.equals("*")) {
+                    System.out.print(ConsoleColors.BLACK_BACKGROUND_BRIGHT + "    " + ConsoleColors.RESET);
+                } else {
+                    if (digit.equals("0")) {
+                        System.out.print(ConsoleColors.RED_BACKGROUND_BRIGHT + " -> " + ConsoleColors.RESET);
+                    } else {
+                        System.out.print(colors.get(Integer.parseInt(digit)) + "    " + ConsoleColors.RESET);
+                    }
+                }
+            }
+            System.out.println();
         }
-        System.out.println();
     }
 
     private RushHour performMove(Move move) {

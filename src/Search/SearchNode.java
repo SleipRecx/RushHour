@@ -11,4 +11,5 @@ public interface SearchNode {
     void setG(Double g);
     Double getG();
     Double getF();
+    void printState();
 }
