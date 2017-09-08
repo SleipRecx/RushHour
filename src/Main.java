@@ -1,3 +1,4 @@
+import Search.Heuristic;
 import Search.SearchAlgorithms;
 import Search.SearchNode;
 import RushHour.*;
@@ -11,11 +12,12 @@ import java.util.Set;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
-        SearchNode rushHour = new RushHour("rush_hour_problems/easy.txt");
-        SearchResult result = SearchAlgorithms.AStar(rushHour);
-        result.visualizePath(500);
-        System.out.println(result);
 
+    public static void main(String[] args) throws IOException {
+        SearchNode root = new RushHour("rush_hour_problems/hard.txt");
+        System.out.println(SearchAlgorithms.AStar(root, Heuristic::zeroHeuristic));
+        System.out.println(SearchAlgorithms.AStar(root, Heuristic::manhattenHeuristic));
+        System.out.println(SearchAlgorithms.AStar(root, Heuristic::simpleBlockingHeuristic));
+        System.out.println(SearchAlgorithms.AStar(root, Heuristic::advancedHeuristic));
     }
 }

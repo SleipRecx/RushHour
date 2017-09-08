@@ -105,7 +105,7 @@ public class RushHour implements SearchNode {
         return blockingCars.size();
     }
 
-    private int distanceToGoal() {
+    public int distanceToGoal() {
         return COL_COUNT - getCarZero().getX()+1;
     }
 

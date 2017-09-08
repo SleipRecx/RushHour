@@ -1,5 +1,6 @@
 package Search;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -51,11 +52,10 @@ public class SearchAlgorithms {
         throw new IllegalStateException("No solution found");
     }
 
-
-    public static SearchResult AStar(SearchNode root) {
+    public static SearchResult AStar(SearchNode root, Function<SearchNode, Double> heuristic) {
         long startTime = System.currentTimeMillis();
         Set<SearchNode> closed = new HashSet<>();
-        Queue<SearchNode> open = new PriorityQueue<>((o1, o2) -> o1.getF() < o2.getF() ? -1 : 1);
+        Queue<SearchNode> open = new PriorityQueue<>((o1, o2) ->  o1.getG() + heuristic.apply(o1) < o2.getG() + heuristic.apply(o2) ? -1: 1);
         open.add(root);
         while (open.size() > 0){
             SearchNode current = open.poll();
@@ -87,6 +87,7 @@ public class SearchAlgorithms {
         for (SearchNode successor: current.generateSuccessors()) {
             if (current.getG() + current.arcCost(successor) < successor.getG()) {
                 successor.setParent(current);
+                System.out.println("dss");
                 successor.setG(current.getG() + current.arcCost(successor));
                 propagatePathImprovements(successor);
             }
