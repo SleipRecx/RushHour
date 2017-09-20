@@ -1,6 +1,9 @@
 package Search;
 import java.util.*;
 import java.util.function.Function;
+/*
+General purpose search algorithms (dfs, bfs and a*)
+ */
 
 public class SearchAlgorithms {
 
@@ -50,13 +53,25 @@ public class SearchAlgorithms {
         throw new IllegalStateException("No solution found");
     }
 
-    public static SearchResult AStar(SearchNode root, Function<SearchNode, Double> heuristic) {
+    /**
+     *
+     * @param root the initial search state
+     * @param heuristic a function that returns the estimated cost of reaching a state
+     * @param debug set true if debug information is needed
+     * @return SearchResult or throws an IllegalStateException if no solution is found
+     */
+    public static SearchResult AStar(SearchNode root, Function<SearchNode, Double> heuristic, boolean debug) {
+        // used to track time elapsed
         long startTime = System.currentTimeMillis();
+
         Set<SearchNode> closed = new HashSet<>();
+        // We use a priority queue sorted incrementally on the node with lowest f-score. this makes it simple to pop the correct node
         Queue<SearchNode> open = new PriorityQueue<>((o1, o2) ->  o1.getG() + heuristic.apply(o1) < o2.getG() + heuristic.apply(o2) ? -1: 1);
         open.add(root);
+
         while (open.size() > 0){
             SearchNode current = open.poll();
+            if (debug) current.printState();
             closed.add(current);
             if (current.isSolution()) {
                 return new SearchResult(current, open.size() + closed.size(), System.currentTimeMillis() - startTime, "A star");
@@ -81,11 +96,11 @@ public class SearchAlgorithms {
         throw new IllegalStateException("No solution found");
     }
 
+    // Found improved path, propagate improvements recursively
     private static void propagatePathImprovements(SearchNode current) {
         for (SearchNode successor: current.generateSuccessors()) {
             if (current.getG() + current.arcCost(successor) < successor.getG()) {
                 successor.setParent(current);
-                System.out.println("dss");
                 successor.setG(current.getG() + current.arcCost(successor));
                 propagatePathImprovements(successor);
             }

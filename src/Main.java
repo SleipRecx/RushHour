@@ -14,9 +14,10 @@ public class Main {
 
 
     public static void main(String[] args) throws IOException {
-        SearchNode root = new RushHour("rush_hour_problems/expert.txt");
-        System.out.println(SearchAlgorithms.depthFirstSearch(root));
-        System.out.println(SearchAlgorithms.AStar(root, Heuristic::zeroHeuristic));
-        System.out.println(SearchAlgorithms.AStar(root, Heuristic::advancedHeuristic));
+        SearchNode root = new RushHour("rush_hour_problems/hard.txt");
+        System.out.println(SearchAlgorithms.AStar(root, Heuristic::zeroHeuristic, false));
+        System.out.println(SearchAlgorithms.AStar(root, Heuristic::manhattenHeuristic, false));
+        System.out.println(SearchAlgorithms.AStar(root, Heuristic::simpleBlockingHeuristic, false));
+        SearchAlgorithms.AStar(root, Heuristic::advancedHeuristic, false).visualizePath(500);
     }
 }

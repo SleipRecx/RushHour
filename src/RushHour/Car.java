@@ -16,6 +16,7 @@ public class Car {
         this.size = quad[3];
     }
 
+    // Returns the coordinates currently occupied by this car
     public Set<int[]> getCoordinatesOccupied() {
         Set<int[]> occupied = new HashSet<>();
         occupied.add(new int[]{this.x, this.y});
@@ -61,10 +62,15 @@ public class Car {
         this.size = size;
     }
 
+    // Returns a car's position in the "native" format (used to make new copies)
     public int[] getQuadFormat() {
         return new int[]{this.vertical ? 1 : 0, x, y, size};
     }
 
+    /*
+    Since we make copies of the board when a move is made, new "equal" states get new references.
+    We consider states where two boards look the same to be equal.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

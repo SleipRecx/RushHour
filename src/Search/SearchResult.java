@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/*
+Helper class to display search result properly
+ */
 public class SearchResult {
     private String algorithm;
     private SearchNode goal;
@@ -37,7 +40,6 @@ public class SearchResult {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println();
         });
     }
 

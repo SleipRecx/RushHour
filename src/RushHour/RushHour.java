@@ -9,6 +9,22 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/*
+    This class is the RushHour specific implementation used with A*.
+    It implements the SearchNode interfaces so the a*-algorithm can expect certain functions to be present.
+    Implemented methods:
+        Set<SearchNode> generateSuccessors();
+        Boolean isSolution();
+        SearchNode getParent();
+        void setParent(SearchNode parent);
+        Double arcCost(SearchNode node);
+        void setG(Double g);
+        Double getG();
+        Double getF();
+        void printState();
+
+ */
+
 public class RushHour implements SearchNode {
 
     final static int ROW_COUNT = 6;
@@ -32,6 +48,11 @@ public class RushHour implements SearchNode {
     }
 
     @Override
+    /*
+    Returns a set of possible successor states from the current state.
+    In the case of rushour; new possible configurations of the board
+    i.e  a set of states where each car that can be moved from the current position is moved (one move per new state)
+     */
     public Set<SearchNode> generateSuccessors(){
         Set<Move> moves = new HashSet<>();
         getCars().forEach(car -> {
@@ -55,6 +76,7 @@ public class RushHour implements SearchNode {
     }
 
     @Override
+    // The cost of getting from one state(one search node to another) to another is always 1 for rushour.
     public Double arcCost(SearchNode node) {
         return 1.0;
     }
@@ -65,6 +87,7 @@ public class RushHour implements SearchNode {
     }
 
     @Override
+    // The accumulated arc-cost of getting this state (+1 for each new state)
     public void setG(Double g) {
         this.g = g;
     }
@@ -80,11 +103,13 @@ public class RushHour implements SearchNode {
     }
 
     @Override
+    // A solution is found if car0 touches position 5,2
     public Boolean isSolution() {
         return getCarZero().getCoordinatesOccupied().stream()
                 .filter(cord -> cord[0] == 5 && cord[1] == 2).collect(Collectors.toSet()).size() > 0;
     }
 
+    // Checks if a position is currently occupied by a car
     public boolean isOpen(int x, int y) {
         return cars.stream()
                 .map(Car::getCoordinatesOccupied)
@@ -93,6 +118,7 @@ public class RushHour implements SearchNode {
                 .collect(Collectors.toSet()).isEmpty();
     }
 
+    // Returns how many cars are directly blocking car0 from the exit. Used as one heuristic function
     public int getBlockingCars() {
         List<Car> blockingCars = cars.stream().filter(car -> !car.equals(getCarZero())).filter(car -> {
             for (int[] cord: car.getCoordinatesOccupied()) {
@@ -105,10 +131,12 @@ public class RushHour implements SearchNode {
         return blockingCars.size();
     }
 
+    // How many moves must minimally be made to reach the goal (does not consider blocking cars)
     public int distanceToGoal() {
         return COL_COUNT - getCarZero().getX()+1;
     }
 
+    // Return the car that occupies position (x, y)
     public Optional<Car> getCarAt(int x, int y) {
         for (Car car: cars) {
             for (int[] cord: car.getCoordinatesOccupied()) {
@@ -120,6 +148,7 @@ public class RushHour implements SearchNode {
         return Optional.empty();
     }
 
+    // The red car is always index 0
     private Car getCarZero() {
         return cars.iterator().next();
     }
@@ -128,6 +157,7 @@ public class RushHour implements SearchNode {
         return cars;
     }
 
+    // Used to show the state of the board at any given state
     public void printState() {
         String[][] board = new String[ROW_COUNT][COL_COUNT];
         List<String> colors = new ArrayList<>();
@@ -171,8 +201,10 @@ public class RushHour implements SearchNode {
             }
             System.out.println();
         }
+        System.out.println();
     }
 
+    // Makes alteration to a cloned board. The result is the new state.
     private RushHour performMove(Move move) {
         RushHour newState = cloneBoard();
         newState.cars.forEach(car -> {
@@ -184,6 +216,8 @@ public class RushHour implements SearchNode {
         return newState;
     }
 
+    // When making changes to the board-configuration we make copies of the old one,
+    // so we have no side effects from altering values
     private RushHour cloneBoard() {
         RushHour newState = new RushHour();
         cars.forEach(car -> {
@@ -193,6 +227,10 @@ public class RushHour implements SearchNode {
         return newState;
     }
 
+    /*
+    Since we make copies of the board when a move is made, new "equal" states get new references.
+    We consider states where two boards look the same to be equal.
+     */
     @Override
     public boolean equals(Object o) {
         if(o instanceof RushHour){
