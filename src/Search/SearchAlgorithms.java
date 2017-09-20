@@ -97,6 +97,7 @@ public class SearchAlgorithms {
         throw new IllegalStateException("No solution found");
     }
 
+    // Found improved path, propagate improvements recursively
     private static void propagatePathImprovements(SearchNode current) {
         for (SearchNode successor: current.generateSuccessors()) {
             if (current.getG() + current.arcCost(successor) < successor.getG()) {

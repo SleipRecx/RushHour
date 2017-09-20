@@ -20,6 +20,6 @@ public class Main {
         //System.out.println(SearchAlgorithms.AStar(root, Heuristic::simpleBlockingHeuristic, false));
         System.out.println(SearchAlgorithms.breadthFirstSearch(root));
         System.out.println(SearchAlgorithms.depthFirstSearch(root));
-        System.out.println(SearchAlgorithms.AStar(root, Heuristic::advancedHeuristic, false));
+        SearchAlgorithms.AStar(root, Heuristic::advancedHeuristic, false).visualizePath(500);
     }
 }

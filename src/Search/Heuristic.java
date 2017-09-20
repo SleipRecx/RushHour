@@ -5,6 +5,10 @@ import RushHour.RushHour;
 
 public class Heuristic {
 
+    /*
+    These are static heuristic implementations to be passed to the search algorithms. These are specific for rushhour
+     */
+
     public static Double zeroHeuristic(SearchNode node) {
         return 0.0;
     }
